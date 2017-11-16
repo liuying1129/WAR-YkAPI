@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.yklis.dao.ApiTokenDao">  
+  
+    <resultMap type="com.yklis.entity.ApiTokenEntity" id="apiTokenMap">        
+        <!-- property必须与实体中的属性一样，column必须与select中字段名一样 -->
+		<id property="userId" column="userId"/>
+		<result property="token" column="token"/>
+		<result property="modDateTime" column="Mod_Date_Time"/>
+		<result property="createDateTime" column="Create_Date_Time"/>
+	</resultMap>
+
+    <select id="selectApiToken" resultMap="apiTokenMap" parameterType="com.yklis.entity.ApiTokenEntity">		  
+		select * 
+		from ApiToken  
+		<where>
+	        <if test="userId != null and userId !='' ">
+	            and userId=#{userId}
+	        </if> 
+	        <if test="token != null and token !='' ">
+	            and token=#{token}
+	        </if> 
+	        <if test="modDateTime != null ">
+	            and Mod_Date_Time=#{modDateTime}
+	        </if> 
+	        <if test="createDateTime != null ">
+	            and Create_Date_Time=#{createDateTime}
+	        </if> 	   		
+		</where>
+	</select>
+
+    <insert id="insertApiToken" parameterType="com.yklis.entity.ApiTokenEntity">
+		insert into ApiToken 
+		( 
+		  userId
+		, token
+		)
+		 VALUES
+        (
+        #{userId},
+        #{token}
+        )   
+	</insert>
+	
+	<update id="updateApiToken" parameterType="com.yklis.entity.ApiTokenEntity">         
+        update ApiToken 
+		<set>
+	        <if test="token != null and token !='' ">
+			    token=#{token},
+			</if>
+			<if test="modDateTime != null ">
+			    Mod_Date_Time=#{modDateTime}
+			</if>
+		</set>       
+        where userId=#{userId} 
+    </update> 
+    
+	<update id="updateTokenModTime">         
+        update ApiToken set Mod_Date_Time=getdate() where token=#{0} 
+    </update> 
+	
+</mapper>

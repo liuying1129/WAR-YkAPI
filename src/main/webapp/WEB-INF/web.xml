@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
+  <display-name>YkAPI</display-name>
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>classpath:applicationContext.xml</param-value>
+  </context-param>
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+
+  <!-- RESTful接口走该Servlet,并进入相应的Controller -->
+  <servlet>
+    <servlet-name>dispatcher</servlet-name>
+    <servlet-class>com.yklis.util.RestDispatcherServlet</servlet-class>    
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>dispatcher</servlet-name>
+      <!-- 路径定义为/,表示这是一个default servlet.即如果其他规则都没有找到相应的servlet，就会将请求扔到这里来 -->
+      <url-pattern>/</url-pattern>
+  </servlet-mapping>
+    
+  <servlet>
+    <display-name>CommonApiServlet</display-name>
+    <servlet-name>CommonApiServlet</servlet-name>
+    <servlet-class>com.yklis.business.CommonApiServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>CommonApiServlet</servlet-name>
+    <url-pattern>/service</url-pattern>
+  </servlet-mapping>
+</web-app>

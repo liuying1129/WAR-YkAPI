@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:jee="http://www.springframework.org/schema/jee"
+		xmlns:tx="http://www.springframework.org/schema/tx"
+		xmlns:aop="http://www.springframework.org/schema/aop"
+        xmlns:context="http://www.springframework.org/schema/context"
+		xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/tx 
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/jee  
+        http://www.springframework.org/schema/jee/spring-jee.xsd
+        http://www.springframework.org/schema/aop 
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- 有该配置，spring才支持autowire注解 -->
+    <!-- 下面的context:component-scan隐含此功能 -->
+    <!-- <context:annotation-config/> -->
+    
+    <!-- 扫描类包Java文件的Spring注解，如@Component、@Repository、@Service、@Controller等，将这些类注册为bean -->
+    <context:component-scan base-package="com.yklis.dao" />
+    
+    <context:component-scan base-package="com.yklis.service.impl" />
+            
+    <!-- 读入属性文件 -->  
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">  
+	    <property name="locations">  
+	        <list>  
+	            <!-- <value>classpath:jdbc.properties</value> -->
+                <!-- file:/ykapi-cfg/jdbc.properties,file:window下是指当前分区,比如项目在d盘，则是d:/ykapi-cfg/jdbc.properties -->
+                <!-- 在项目包之外配置是为了部署、升级更方便 -->
+                <value>file:/ykapi-cfg/jdbc.properties</value>
+	            <value>classpath:redis.properties</value>
+	        </list>  
+	    </property>  
+	</bean>
+    
+	<!-- Spring JDBC数据源配置 -->
+    <!-- <bean id="dataSource_master" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${jdbc.driverClass}"></property>
+        <property name="url" value="${jdbc.jdbcUrl}"></property>
+        <property name="username" value="${jdbc.user}"></property>
+        <property name="password" value="${jdbc.password}"></property>
+    </bean> -->
+		  
+	<!-- 数据源配置 -->
+	<bean id="dataSource_master" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="${jdbc.driverClass}"></property>
+		<property name="jdbcUrl" value="${jdbc.jdbcUrl}"></property>
+		<property name="user" value="${jdbc.user}"></property>
+		<property name="password" value="${jdbc.password}"></property>
+		<property name="initialPoolSize" value="${jdbc.pool.initialPoolSize}"></property>
+		<property name="maxIdleTime" value="${jdbc.pool.maxIdleTime}"></property>
+		<property name="maxPoolSize" value="${jdbc.pool.maxPoolSize}"></property>
+		<property name="minPoolSize" value="${jdbc.pool.minPoolSize}"></property>
+		<property name="checkoutTimeout" value="${jdbc.pool.checkoutTimeout}"></property>
+	</bean>
+			
+	<!-- 统一数据库 -->
+    <bean id="multipleDataSource" class="com.yklis.util.MultipleDataSource">
+        <!-- 从未setCustomerType或clearCustomerType，使用defaultTargetDataSource -->
+        <property name="defaultTargetDataSource" ref="dataSource_master"/>
+        <property name="targetDataSources">
+            <map>     
+                <!-- 注意这里的value是和上面的DataSource的id对应，key要和类CustomerContextHolder中的常量对应 -->
+                <!-- <entry value-ref="dataSource_1" key="dataSource_1"/>
+                <entry value-ref="dataSource_2" key="dataSource_2"/> -->
+            </map>   
+        </property>
+    </bean>		
+		
+	<!-- 定义JdbcTemplate Bean.这样就可以在JAVA代码中通过@Autowired将Spring容器中的Bean注入进来 -->
+	<!-- 如果不在这里定义，也可以在JAVA代码中进行如下定义 -->
+	<!-- JdbcTemplate jdbcTemplate = new JdbcTemplate(); -->	
+	<!-- jdbcTemplate.setDataSource(ds); -->	
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource">
+            <ref bean="multipleDataSource" />
+        </property>
+  	</bean>  
+  	
+	<!-- 注解方式配置事务 -->
+	<!-- <tx:annotation-driven transaction-manager="transactionManager" /> -->
+      	
+	<!-- 声明式事务管理器 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="multipleDataSource" />
+    </bean>	
+    
+	<!-- 事务增强 -->  
+    <!-- 默认查找名为transactionManager的事务管理器，如果 事务管理器命名为transactionManager,则可不指定transaction-manager属性 -->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">     
+        <tx:attributes> 
+        	<tx:method name="*" propagation="REQUIRED" />    
+        </tx:attributes>     
+    </tx:advice>	
+    
+    <!-- 切点表达式语言定义目标方法 -->
+	<!-- 第一个*代表所有的返回值类型 
+	第二个*代表所有的类
+	第三个*代表类所有方法 
+	最后一个..代表所有的参数 -->
+	<!-- 决定了不能在service层切换数据源。可以执行，但切换不成功(不会报错) -->
+	<aop:config>
+   		<aop:pointcut id="servicesMethod" expression="execution(* com.yklis.service.impl.*.*(..))" />
+   		<aop:advisor advice-ref="txAdvice" pointcut-ref="servicesMethod" />  
+  	</aop:config> 
+		
+	<!-- 配置sqlSessionFactory -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="configLocation" value="classpath:MyBatis-Configuration.xml"></property>
+		<property name="dataSource" ref="multipleDataSource" />
+	</bean>
+	
+	<!-- 配置扫描器,扫描value下的所有接口，然后创建各自接口的动态代理类 -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer"> 
+        <property name="basePackage" value="com.yklis.dao" />
+    </bean>
+    
+    <!-- redis连接池配置 -->
+	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">  
+	    <property name="maxTotal" value="${redis.pool.maxTotal}" />  
+	    <property name="maxIdle" value="${redis.pool.maxIdle}" />  
+	    <property name="maxWaitMillis" value="${redis.pool.maxWaitMillis}" />  
+	</bean>
+		
+	<!-- redis连接池 -->
+	<bean id="shardedJedisPool" class="redis.clients.jedis.ShardedJedisPool">  
+	    <constructor-arg index="0" ref="jedisPoolConfig" />  
+	    <constructor-arg index="1">  
+	        <list>  
+	            <bean class="redis.clients.jedis.JedisShardInfo">  
+	                <constructor-arg index="0" value="${redis.host}" />  
+	                <constructor-arg index="1" value="${redis.port}" type="int" />  
+	            </bean>  
+	        </list>  
+	    </constructor-arg>  
+	</bean>	
+				
+</beans>

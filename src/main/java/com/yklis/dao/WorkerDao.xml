@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.yklis.dao.WorkerDao">  
+      
+    <resultMap type="com.yklis.entity.WorkerEntity" id="workerMap">        
+        <!-- property必须与实体中的属性一样，column必须与select中字段名一样 -->
+		<id property="unid" column="unid"/>
+		<result property="pkDeptId" column="pkDeptId"/>
+		<result property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="pinYin" column="pinYin"/>
+		<result property="wbm" column="wbm"/>
+		<result property="passwd" column="passwd"/>
+		<result property="ifSuperUser" column="ifSuperUser"/>
+		<result property="showAllTj" column="showAllTj"/>
+		<result property="accountLimit" column="account_limit"/>
+	</resultMap>
+
+    <select id="selectWorker" resultMap="workerMap" parameterType="com.yklis.entity.WorkerEntity">		  
+		select * 
+		from worker  
+		<where>
+			<if test="unid != null and unid !=0 ">
+	            unid=#{unid}
+	        </if> 
+	        <if test="pkDeptId != null and pkDeptId !=0 ">
+	            and pkDeptId=#{pkDeptId}
+	        </if> 
+	        <if test="passwd != null and passwd !='' ">
+	            and passwd=#{passwd}
+	        </if> 
+	        <if test="pinYin != null and pinYin !='' ">
+	            and pinYin=#{pinYin}
+	        </if> 
+	        <if test="wbm != null and wbm !='' ">
+	            and wbm=#{wbm}
+	        </if> 
+	        <if test="accountLimit != null and accountLimit !='' ">
+	            and account_limit=#{accountLimit}
+	        </if> 
+	        <if test="id != null and id !='' ">
+	            and id=#{id}
+	        </if> 
+	        <if test="name != null and name !='' ">
+	            and name=#{name}
+	        </if> 
+	        <if test="ifSuperUser != null and ifSuperUser !='' ">
+	            and ifSuperUser=#{ifSuperUser}
+	        </if> 
+	        <if test="showAllTj != null and showAllTj !='' ">
+	            and showAllTj=#{showAllTj}
+	        </if> 
+		</where>
+	</select>
+
+    <!-- mybatis参数注解方式(@Param),不需要parameterType -->	  
+    <select id="ifCanLogin" resultMap="workerMap">	
+		select * from worker where id=#{userId} and passwd=#{passWord}
+    </select>
+        
+</mapper>

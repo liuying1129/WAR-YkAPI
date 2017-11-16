@@ -1,0 +1,109 @@
+//表示生成jar包
+//apply plugin: 'java'
+//表示生成war包
+apply plugin: 'war'
+
+//下面的install方法需要
+apply plugin: 'maven'
+
+group = 'com.yklis'
+version = '1.0-SNAPSHOT'
+//指定gradle install时生成jar包的artifactId
+install {
+    repositories.mavenInstaller {
+        pom.artifactId = 'YkAPI' 
+    }
+}
+
+//配置仓库
+repositories {
+
+  //maven本地库
+  mavenLocal()
+  //maven远程库
+  mavenCentral()
+
+}
+
+def SPRING_VERSION = "4.1.7.RELEASE"
+def SPRING_GROUPID = "org.springframework"
+
+//配置依赖
+dependencies {
+
+  //compile:编译项目源代码时会使用到该配置项中的依赖
+  //runtime:运行项目时会用到该配置项中的依赖。默认情况下，也会包含编译代码时候的依赖
+  //testCompile:编译测试代码时会用到该配置项中的依赖。默认情况下，也会包含编译和运行正式代码的依赖
+  //testRuntime:运行测试代码时会用到该配置项中的依赖。默认情况下，也会包含编译、运行正式代码以及编译测试代码的依赖
+
+  compile 'javax.servlet:javax.servlet-api:3.1.0'
+  compile 'aopalliance:aopalliance:1.0'
+  compile 'org.aspectj:aspectjweaver:1.8.7'
+  compile 'com.mchange:c3p0:0.9.5.1'
+  compile 'com.mchange:mchange-commons-java:0.2.10'
+  compile 'log4j:log4j:1.2.16'
+  compile 'org.slf4j:slf4j-api:1.6.6'
+  compile 'jstl:jstl:1.2'
+  compile 'taglibs:standard:1.1.2'
+  compile 'commons-logging:commons-logging:1.2'
+  compile 'org.apache.commons:commons-pool2:2.4.2'
+  compile 'redis.clients:jedis:2.7.3'
+  compile 'javax.transaction:jta:1.1'
+  compile 'net.sourceforge.jtds:jtds:1.3.1'
+  compile 'org.mybatis:mybatis-spring:1.2.3'
+  compile 'org.mybatis:mybatis:3.3.0'
+  compile 'org.quartz-scheduler:quartz:2.2.1'
+  compile 'org.quartz-scheduler:quartz-jobs:2.2.1'
+  compile 'org.slf4j:slf4j-log4j12:1.6.6'
+  compile group: SPRING_GROUPID, name: 'spring-aop', version: SPRING_VERSION
+  compile group: SPRING_GROUPID, name: 'spring-aspects', version: SPRING_VERSION
+  compile group: SPRING_GROUPID, name: 'spring-beans', version: SPRING_VERSION
+  compile group: SPRING_GROUPID, name: 'spring-context', version: SPRING_VERSION
+  compile group: SPRING_GROUPID, name: 'spring-context-support', version: SPRING_VERSION
+  compile group: SPRING_GROUPID, name: 'spring-core', version: SPRING_VERSION
+  compile group: SPRING_GROUPID, name: 'spring-expression', version: SPRING_VERSION
+  compile group: SPRING_GROUPID, name: 'spring-instrument', version: SPRING_VERSION
+  compile group: SPRING_GROUPID, name: 'spring-instrument-tomcat', version: SPRING_VERSION
+  compile group: SPRING_GROUPID, name: 'spring-jdbc', version: SPRING_VERSION
+  compile group: SPRING_GROUPID, name: 'spring-jms', version: SPRING_VERSION
+  compile group: SPRING_GROUPID, name: 'spring-messaging', version: SPRING_VERSION
+  compile group: SPRING_GROUPID, name: 'spring-orm', version: SPRING_VERSION
+  compile group: SPRING_GROUPID, name: 'spring-orm', version: SPRING_VERSION
+  compile group: SPRING_GROUPID, name: 'spring-test', version: SPRING_VERSION
+  compile group: SPRING_GROUPID, name: 'spring-tx', version: SPRING_VERSION
+  compile group: SPRING_GROUPID, name: 'spring-web', version: SPRING_VERSION
+  compile group: SPRING_GROUPID, name: 'spring-webmvc', version: SPRING_VERSION
+  compile group: SPRING_GROUPID, name: 'spring-webmvc-portlet', version: SPRING_VERSION
+  compile group: SPRING_GROUPID, name: 'spring-websocket', version: SPRING_VERSION
+  //google的JSON处理库
+  compile 'com.google.code.gson:gson:2.5'
+  //本地仓库工具库
+  compile 'com.yklis:LYFunction:1.0-SNAPSHOT'
+  testCompile 'junit:junit:4.12'  
+
+}
+
+//解决maven编译时“错误:编码GBK的不可映射字符”的问题
+tasks.withType(JavaCompile) {  
+    options.encoding = "UTF-8"  
+}
+
+//如果不加该配置，则打包时只会默认将src/main/resources的文件做为资源文件打包，漏掉dao目录下的xml资源文件
+sourceSets {
+    main {
+        //把resource指向了java目录，这样就可以收录java目录中的资源文件了
+        //注意：gradle会以指定的目录为根，去寻找当前目录以及子目录下的资源文件
+        //如果带路径复制，最好不要指定到具体的子包（如:src/main/java/mybatis/mapper/module），不然资源会位于根目录下
+        resources {
+            srcDirs = ['src/main/resources','src/main/java']
+        }
+    }
+}
+
+//指定build目录中生成的WAR包名称
+war {
+
+  baseName = 'YkAPI'
+  version = ''
+
+}
