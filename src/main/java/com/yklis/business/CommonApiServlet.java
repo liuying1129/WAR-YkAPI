@@ -2,13 +2,10 @@ package com.yklis.business;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -328,25 +325,6 @@ public class CommonApiServlet extends HttpServlet {
         map.put("AIF016", DesApiService.class);//DES加密服务
         
         return map;
-    }
-    
-    static class RequestParameterComparator implements Comparator<Map.Entry<String,String[]>> {
-        
-        private Logger logger = Logger.getLogger(this.getClass());
-        
-        @Override
-        public int compare(Entry<String, String[]> o1, Entry<String, String[]> o2) {
-
-            try{
-                
-                return o1.getKey().compareTo(o2.getKey());
-                                                    
-            }catch(Exception e){
-                logger.error("RequestParameterComparator出错:"+e.toString());
-                return 0;
-            }
-        }
- 
     }
 
 }
