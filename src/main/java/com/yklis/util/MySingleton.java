@@ -2,7 +2,12 @@ package com.yklis.util;
 
 import java.security.KeyPair;
 
-//饿汉式单例类.在类初始化时，已经自行实例化
+/**
+ * 单例模式
+ * 饿汉式单例类.在类初始化时，已经自行实例化
+ * @author liuying
+ *
+ */
 public class MySingleton {
 	
     //构造方法限定为private,避免类在外部被实例化
