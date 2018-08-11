@@ -11,14 +11,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.springframework.stereotype.Service;
-
 import com.google.gson.Gson;
-import com.yklis.service.RsaApiService;
+import com.yklis.service.CommonApiService;
 import com.yklis.util.MySingleton;
 import com.yklis.util.RSAUtil;
 
 /**
+ * 工厂模式
+ * 实现类
+ * 
  * 该服务向“调用方”提供RSA加密的exponent、modulus
  * “调用方”通过exponent、modulus还原出公钥
  * 
@@ -31,11 +32,10 @@ import com.yklis.util.RSAUtil;
  * 
  * “外部系统”不保存RSA公钥，每次需要时去请求
  * 
- * @author ying07.liu
+ * @author liuying
  *
  */
-@Service
-public class RsaApiServiceImpl implements RsaApiService {
+public class RsaApiServiceImpl implements CommonApiService {
 
     //配置容器起动时候加载log4j配置文件
     //只要将log4j.properties放在classes下，tomcat启动的时候会自动加载log4j的配置信息，

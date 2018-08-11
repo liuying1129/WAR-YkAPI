@@ -9,15 +9,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.springframework.stereotype.Service;
-
 import com.google.gson.Gson;
 import com.yklis.service.CheckUserTokenService;
-import com.yklis.service.DesApiService;
+import com.yklis.service.CommonApiService;
 import com.yklis.util.CommFunction;
 
-@Service
-public class DesApiServiceImpl implements DesApiService,CheckUserTokenService {
+/**
+ * 工厂模式
+ * 实现类
+ * @author liuying
+ *
+ */
+public class DesApiServiceImpl implements CommonApiService,CheckUserTokenService {
 
     //配置容器起动时候加载log4j配置文件
     //只要将log4j.properties放在classes下，tomcat启动的时候会自动加载log4j的配置信息，

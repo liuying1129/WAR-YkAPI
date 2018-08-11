@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import com.google.gson.Gson;
@@ -23,12 +22,15 @@ import com.yklis.entity.ApiTokenEntity;
 import com.yklis.entity.WorkerEntity;
 import com.yklis.service.ApiTokenService;
 import com.yklis.service.CheckUserSignService;
-import com.yklis.service.LoginApiService;
+import com.yklis.service.CommonApiService;
 import com.yklis.service.WorkerService;
 import com.yklis.util.MySingleton;
 import com.yklis.util.RSAUtil;
 
 /**
+ * 工厂模式
+ * 实现类
+ * 
  * 登录服务
  * 每次登录成功则生成新的token
  * 
@@ -50,8 +52,7 @@ import com.yklis.util.RSAUtil;
  * @author ying07.liu
  *
  */
-@Service
-public class LoginApiServiceImpl implements LoginApiService,CheckUserSignService {
+public class LoginApiServiceImpl implements CommonApiService,CheckUserSignService {
 
     //配置容器起动时候加载log4j配置文件
     //只要将log4j.properties放在classes下，tomcat启动的时候会自动加载log4j的配置信息，
@@ -60,6 +61,7 @@ public class LoginApiServiceImpl implements LoginApiService,CheckUserSignService
     //PropertyConfigurator.configure("log4jj.properties");
     private Logger logger = Logger.getLogger(this.getClass());
     
+    //to-do:不能自动注入
     @Autowired
     private WorkerService workerService;
     

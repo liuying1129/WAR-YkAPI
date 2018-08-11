@@ -13,16 +13,19 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.google.gson.Gson;
 import com.yklis.dao.AppVisitDao;
 import com.yklis.entity.AppVisitEntity;
-import com.yklis.service.AppVisitApiService;
 import com.yklis.service.CheckUserSignService;
+import com.yklis.service.CommonApiService;
 
-@Service
-public class AppVisitApiServiceImpl implements AppVisitApiService,CheckUserSignService {
+/**
+ * 工厂模式
+ * 实现类
+ * @author liuying
+ *
+ */
+public class AppVisitApiServiceImpl implements CommonApiService,CheckUserSignService {
 
     //配置容器起动时候加载log4j配置文件
     //只要将log4j.properties放在classes下，tomcat启动的时候会自动加载log4j的配置信息，
@@ -31,6 +34,7 @@ public class AppVisitApiServiceImpl implements AppVisitApiService,CheckUserSignS
     //PropertyConfigurator.configure("log4jj.properties");
     private Logger logger = Logger.getLogger(this.getClass());
 
+    //to-do:不能自动注入
     @Autowired
     private AppVisitDao appVisitDao;
     

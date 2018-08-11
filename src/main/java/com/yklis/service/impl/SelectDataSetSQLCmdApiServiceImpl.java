@@ -10,17 +10,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Service;
+import org.springframework.web.context.ContextLoader;
+import org.springframework.web.context.WebApplicationContext;
 
 import com.google.gson.Gson;
 import com.yklis.service.CheckUserTokenService;
-import com.yklis.service.SelectDataSetSQLCmdApiService;
+import com.yklis.service.CommonApiService;
 
-@Service
-public class SelectDataSetSQLCmdApiServiceImpl implements
-		SelectDataSetSQLCmdApiService,CheckUserTokenService {
+/**
+ * 工厂模式
+ * 实现类
+ * @author liuying
+ *
+ */
+public class SelectDataSetSQLCmdApiServiceImpl implements CommonApiService,CheckUserTokenService {
 
 	// 配置容器起动时候加载log4j配置文件
 	// 只要将log4j.properties放在classes下，tomcat启动的时候会自动加载log4j的配置信息，
@@ -29,9 +33,8 @@ public class SelectDataSetSQLCmdApiServiceImpl implements
 	// PropertyConfigurator.configure("log4jj.properties");
 	private Logger logger = Logger.getLogger(this.getClass());
 
-	// 注入Bean
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
+    private WebApplicationContext webApplicationContext = ContextLoader.getCurrentWebApplicationContext();    
+    private JdbcTemplate jdbcTemplate = webApplicationContext.getBean(JdbcTemplate.class);
 
 	@Override
 	public void handle(HttpServletRequest request, HttpServletResponse response) {
