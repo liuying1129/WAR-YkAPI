@@ -14,26 +14,21 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.context.ContextLoader;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import com.google.gson.Gson;
 import com.yklis.entity.ApiTokenEntity;
 import com.yklis.service.ApiTokenService;
-import com.yklis.service.AppVisitApiService;
 import com.yklis.service.CheckUserSignService;
 import com.yklis.service.CheckUserTokenService;
-import com.yklis.service.ExecSQLCmdApiService;
-import com.yklis.service.LoginApiService;
-import com.yklis.service.RsaApiService;
-import com.yklis.service.ScalarSQLCmdApiService;
-import com.yklis.service.SelectDataSetSQLCmdApiService;
 import com.yklis.service.CommonApiService;
-import com.yklis.service.DesApiService;
 import com.yklis.util.CommFunction;
+import com.yklis.util.CommonApiFactory;
 
 /**
+ * 工厂模式
+ * 用户类,使用工厂
+ * 
  * HttpServlet,拦截所有HTTP请求，RESTful请求除外
  * 
  * 实现了CheckUserTokenService接口的服务，会校验请求的token(令牌)及sign(签名)
@@ -142,15 +137,13 @@ public class CommonApiServlet extends HttpServlet {
 		    }
         	return;
         }
+                        
+        //工厂模型.获得实现类的对象
+        CommonApiFactory commonApiFactory = new CommonApiFactory();
+        CommonApiService commonApiService = commonApiFactory.getCommonApiService(methodNum);
         
-                	    	
-        Map<String, Class<? extends CommonApiService>> apiMap = getApiServiceMap();
-        if (null == apiMap || null == apiMap.keySet() || apiMap.keySet().isEmpty()){
-            logger.info("系统中没有定义API");
-        	return;
-        }
-                    
-        if (!apiMap.keySet().contains(methodNum)){
+        if(null == commonApiService){
+        	
             logger.warn("Request's method [" + methodNum + "] is not exists.");
     		PrintWriter printWriter11 = null;
     	    try {  
@@ -173,11 +166,7 @@ public class CommonApiServlet extends HttpServlet {
     	    }
             return;
         }
-        
-	    WebApplicationContext webApplicationContext = ContextLoader.getCurrentWebApplicationContext();
-	    
-        CommonApiService commonApiService = webApplicationContext.getBean(apiMap.get(methodNum));
-        
+                
         //如果服务实现了CheckUserTokenService接口的情况
         if (commonApiService instanceof CheckUserTokenService){
             
@@ -218,9 +207,10 @@ public class CommonApiServlet extends HttpServlet {
                 return;                
             }            
         }
-        
+                
 	    try{
 	        
+	        //工厂模型.调用实现类对象的方法
 	        commonApiService.handle(request, response);
 	        
         }catch (Exception e) {  
@@ -311,20 +301,4 @@ public class CommonApiServlet extends HttpServlet {
 	    }
     	return null;
     }
-
-    private Map<String, Class<? extends CommonApiService>> getApiServiceMap(){
-        
-        Map<String, Class<? extends CommonApiService>> map = new HashMap<>();
-        
-        map.put("rsa", RsaApiService.class);//rsa:生成rsa密钥对服务        
-        map.put("login", LoginApiService.class);//login:登录服务       
-        map.put("AIF012", ExecSQLCmdApiService.class);
-        map.put("AIF013", ScalarSQLCmdApiService.class);
-        map.put("AIF014", SelectDataSetSQLCmdApiService.class);
-        map.put("AIF015", AppVisitApiService.class);
-        map.put("AIF016", DesApiService.class);//DES加密服务
-        
-        return map;
-    }
-
 }

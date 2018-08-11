@@ -4,7 +4,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * 公共接口interface
+ * 工厂模式
+ * 定义公共HTTP API的interface
  * 
  */
 public interface CommonApiService {
