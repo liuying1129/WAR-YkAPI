@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.yklis.dao.ExtSqlDao">
+    
+    <!-- mybatis参数注解方式(@Param),不需要parameterType -->   
+    <!-- 对于普通JAVA类型,parameterType、resultType使用的是mybatis的类型别名，大小写不敏感 -->
+    <!-- #{}解析为JDBC预编译语句(prepared statement)的参数标记符,#{}被解析为一个参数占位符? -->
+    <!-- ${}仅仅为一个纯碎的 string替换,在动态 SQL解析阶段将会进行变量替换 -->
+    <select id="selectSql" resultType="hashmap">
+        ${selectSql}
+    </select>
+</mapper>

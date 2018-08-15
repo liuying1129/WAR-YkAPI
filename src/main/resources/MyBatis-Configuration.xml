@@ -4,5 +4,6 @@
 	<mappers>
 		<mapper resource="com\yklis\dao\WorkerDao.xml" />
 		<mapper resource="com\yklis\dao\AppVisitDao.xml" />
+		<mapper resource="com\yklis\dao\ExtSqlDao.xml" />
 	</mappers>
 </configuration>
