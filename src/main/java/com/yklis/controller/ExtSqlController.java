@@ -1,4 +1,4 @@
-package com.yklis.rest;
+package com.yklis.controller;
 
 import java.util.List;
 import java.util.Map;
@@ -9,6 +9,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.yklis.service.ExtSqlService;
+
+/**
+ * 通过配置SQL向外提供HTTP API
+ * @author ying07.liu
+ *
+ */
 
 @RestController
 @RequestMapping("/extSqlNum/")

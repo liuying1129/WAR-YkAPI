@@ -41,5 +41,20 @@ public class ExtSqlServiceImpl implements ExtSqlService {
 
         return extSqlDao.selectSql(selectSql);
     }
+    
+    @Override
+    public void execSql(String extSqlNum){
+        
+        String execSql = jdbcTemplate.queryForObject("select Reserve2 from CommCode where TypeName='对外接口' and Unid="+extSqlNum,String.class);
+
+        if(execSql.indexOf("update ")>=0){
+            extSqlDao.updateSql(execSql);
+        }else{
+            extSqlDao.insertSql(execSql);
+        }
+        
+        
+
+    }    
 
 }

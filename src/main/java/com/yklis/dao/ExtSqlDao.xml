@@ -9,4 +9,13 @@
     <select id="selectSql" resultType="hashmap">
         ${selectSql}
     </select>
+    
+    <update id="updateSql">         
+        ${updateSql}
+    </update>
+    
+    <insert id="insertSql">
+        ${insertSql}
+    </insert>
+    
 </mapper>

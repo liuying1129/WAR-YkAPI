@@ -6,5 +6,7 @@ import java.util.Map;
 public interface ExtSqlService {
     
     List<Map<String, Object>> selectSql(String extSqlNum);
+    
+    void execSql(String extSqlNum);   
 
 }
