@@ -14,12 +14,21 @@
 		http://www.springframework.org/schema/mvc/spring-mvc.xsd ">
 
 	<!-- 自动搜索@Controller标注的类，包括其下面的子包 -->
-    <context:component-scan base-package="com.yklis.rest" />
+    <context:component-scan base-package="com.yklis.controller" />
     
     <!-- 自动注册DefaultAnnotationHandlerMapping、AnnotationMethodHandlerAdapter两个bean -->
     <!-- 是spring MVC为@Controllers分发请求所必须的 -->
     <!-- 并提供了：数据绑定支持，@NumberFormatannotation支持，@DateTimeFormat支持，@Valid支持，读写XML的支持（JAXB），读写JSON的支持（Jackson） -->
-    <mvc:annotation-driven />
+    <!-- <mvc:annotation-driven /> -->
+    <mvc:annotation-driven >
+        <!-- 消息转换器 -->
+        <!-- 解决注解@ResponseBody返回中文乱码问题 -->
+        <mvc:message-converters register-defaults="true">
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <property name="supportedMediaTypes" value="text/html;charset=UTF-8"/>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
     
     <!-- 基于@aspectJ切面的驱动器,自动为Spring容器中@aspectJ切面的bean创建代理，织入切面 -->
     <!-- <aop:aspectj-autoproxy/>的属性proxy-target-class，默认为false,表示使用JDK动态代理织入增强，true表示使用CGLib动态代理技术织入增强

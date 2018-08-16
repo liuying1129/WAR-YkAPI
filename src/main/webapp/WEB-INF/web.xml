@@ -12,7 +12,7 @@
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>
 
-  <!-- RESTful接口走该Servlet,并进入相应的Controller -->
+  <!-- Controller走该Servlet -->
   <servlet>
     <servlet-name>dispatcher</servlet-name>
     <servlet-class>com.yklis.util.RestDispatcherServlet</servlet-class>    

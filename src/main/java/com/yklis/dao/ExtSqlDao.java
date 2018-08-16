@@ -13,8 +13,8 @@ public interface ExtSqlDao {
      */ 
     List<Map<String, Object>> selectSql(@Param(value="selectSql") String selectSql);
     
-    void updateSql(@Param(value="updateSql") String selectSql);
+    void updateSql(@Param(value="updateSql") String updateSql);
     
-    void insertSql(@Param(value="insertSql") String selectSql);
+    void insertSql(@Param(value="insertSql") String insertSql);
 
 }

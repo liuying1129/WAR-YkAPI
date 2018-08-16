@@ -1,8 +1,5 @@
 package com.yklis.controller;
 
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,16 +14,16 @@ import com.yklis.service.ExtSqlService;
  */
 
 @RestController
+//@RestController = @Controller + @ResponseBody
 @RequestMapping("/extSqlNum/")
 public class ExtSqlController {
-    
+        
     @Autowired
     private ExtSqlService extSqlService;
 
     @RequestMapping("{extSqlNum}")
-    public List<Map<String, Object>> selectSql(@PathVariable(value="extSqlNum") String extSqlNum){
+    public String runExtSql(@PathVariable(value="extSqlNum") String extSqlNum){
         
-        return extSqlService.selectSql(extSqlNum);
+        return extSqlService.runExtSql(extSqlNum);
     }
-
 }
