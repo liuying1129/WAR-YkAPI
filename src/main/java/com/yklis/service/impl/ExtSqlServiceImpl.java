@@ -25,10 +25,21 @@ public class ExtSqlServiceImpl implements ExtSqlService {
         
     @Override
     public String runExtSql(String extSqlNum){
-        
+                    
         Map<String, Object> mapExtSql;
         try{
             mapExtSql = jdbcTemplate.queryForMap("select * from CommCode where Unid="+extSqlNum+" and TypeName='对外接口' ");
+        }catch(EmptyResultDataAccessException e){
+            
+            Map<String, Object> mapResponse = new HashMap<>();
+            mapResponse.put("errorCode", -123);
+            mapResponse.put("errorMsg", "无效的SQL编码:"+extSqlNum);
+            
+            Map<String, Object> map = new HashMap<>();
+            map.put("success", false);
+            map.put("response", mapResponse);
+            
+            return JSON.toJSONString(map);
         }catch(Exception e){
             
             Map<String, Object> mapResponse = new HashMap<>();
@@ -48,8 +59,8 @@ public class ExtSqlServiceImpl implements ExtSqlService {
             
         //切换数据源的变量准备工作start
         Map<String, Object> customerTypeMap = null;
-        try{            
-            customerTypeMap = jdbcTemplate.queryForMap("select Reserve as driverClass,Reserve2 as url,Reserve3 as user,Reserve4 as password from CommCode where Unid="+jdbcUnid+" and TypeName='JDBC连接字符串' ");
+        try{
+            customerTypeMap = jdbcTemplate.queryForMap("select Reserve as driverClass,Reserve2 as url,Reserve3 as 'user',Reserve4 as password from CommCode where Unid="+jdbcUnid+" and TypeName='JDBC连接字符串' ");
         }catch(EmptyResultDataAccessException e){
             //取不数据是正常业务逻辑,有可能不需要切换数据源
         }catch(Exception e){
@@ -68,7 +79,8 @@ public class ExtSqlServiceImpl implements ExtSqlService {
 
         try{   
             
-            if(!customerTypeMap.isEmpty()) CustomerContextHolder.setCustomerType(customerTypeMap);
+            if((null!=customerTypeMap)&&(!customerTypeMap.isEmpty())) CustomerContextHolder.setCustomerType(customerTypeMap);
+            
             
             if(extSql.toLowerCase().indexOf("update ")>=0){
                 
@@ -158,6 +170,7 @@ public class ExtSqlServiceImpl implements ExtSqlService {
         }finally{
             CustomerContextHolder.clearCustomerType();
         }        
+
     }
 
 }

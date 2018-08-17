@@ -23,7 +23,7 @@ public class ExtSqlController {
 
     @RequestMapping("{extSqlNum}")
     public String runExtSql(@PathVariable(value="extSqlNum") String extSqlNum){
-        
+       
         return extSqlService.runExtSql(extSqlNum);
     }
 }
