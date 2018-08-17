@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,6 +17,13 @@ import com.yklis.util.CustomerContextHolder;
 
 @Service
 public class ExtSqlServiceImpl implements ExtSqlService {
+
+    //配置容器起动时候加载log4j配置文件
+    //只要将log4j.properties放在classes下，tomcat启动的时候会自动加载log4j的配置信息，
+    //在程式代码不再需要使用PropertyConfigurator.configure("log4j.properties")来加载，
+    //如果用了它反而会出现上面的错误--Could not read configuration file [log4jj.properties]
+    //PropertyConfigurator.configure("log4jj.properties");
+    private transient Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -76,10 +84,16 @@ public class ExtSqlServiceImpl implements ExtSqlService {
             return JSON.toJSONString(map);
         }
         //切换数据源的变量准备工作stop
+        
+        logger.info("切换连接信息:"+JSON.toJSONString(customerTypeMap));
 
         try{   
             
-            if((null!=customerTypeMap)&&(!customerTypeMap.isEmpty())) CustomerContextHolder.setCustomerType(customerTypeMap);
+            //if((null!=customerTypeMap)&&(!customerTypeMap.isEmpty())){
+                
+                logger.info("切换DB");
+                CustomerContextHolder.setCustomerType(customerTypeMap);
+            //}
             
             
             if(extSql.toLowerCase().indexOf("update ")>=0){
