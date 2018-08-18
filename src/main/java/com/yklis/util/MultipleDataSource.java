@@ -26,6 +26,9 @@ public class MultipleDataSource extends AbstractRoutingDataSource {
     	//从未setCustomerType或clearCustomerType，customerTypeMap为null.
     	//会使用defaultTargetDataSource
     	if(customerTypeMap == null) return null;
+    	if(null == customerTypeMap.get("driverClass")) return null;
+    	if(null == customerTypeMap.get("url")) return null;
+    	if(null == customerTypeMap.get("user")) return null;
     	
     	String dataSourceKey = customerTypeMap.get("driverClass").toString() + (char)2 + customerTypeMap.get("url").toString() + (char)2 + customerTypeMap.get("user").toString();
     	
