@@ -33,7 +33,7 @@ public class AspectCtlCors {
     //引介增强:表示在目标类中添加一些新的方法和属性
     
     //定义增强类型:Before,前置增强；切点：由切点表达式确定
-    @Before("execution(* com.yklis.rest.*.*(..))")  
+    @Before("execution(* com.yklis.controller.*.*(..))")
     //增强的横切逻辑
     public void doBefore(JoinPoint joinPoint) {  
         
