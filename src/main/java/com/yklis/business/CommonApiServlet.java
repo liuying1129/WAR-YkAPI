@@ -46,7 +46,7 @@ public class CommonApiServlet extends HttpServlet {
     //在程式代码不再需要使用PropertyConfigurator.configure("log4j.properties")来加载，
     //如果用了它反而会出现上面的错误--Could not read configuration file [log4jj.properties]
     //PropertyConfigurator.configure("log4jj.properties");
-    private transient Logger logger = Logger.getLogger(this.getClass());
+    private final Logger logger = Logger.getLogger(this.getClass());
     
 	@Autowired
 	private ApiTokenService apiTokenService;
